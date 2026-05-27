@@ -33,15 +33,6 @@ depends: []
 #include <cstdlib>
 #include <cstring>
 
-#ifndef XR_STDIO_PRINTF_COMPAT
-#if __has_include("print.hpp")
-#define XR_STDIO_PRINTF_COMPAT(fmt, ...) LibXR::STDIO::Printf<fmt>(__VA_ARGS__)
-#else
-#define XR_STDIO_PRINTF_COMPAT(fmt, ...) \
-  LibXR::STDIO::Printf(fmt __VA_OPT__(, ) __VA_ARGS__)
-#endif
-#endif
-
 class SPL06 : public LibXR::Application {
  public:
   struct Data {
@@ -332,9 +323,9 @@ class SPL06 : public LibXR::Application {
 
   static int CommandFunc(SPL06* spl06, int argc, char** argv) {
     if (argc == 1) {
-      XR_STDIO_PRINTF_COMPAT("Usage:\r\n");
-      XR_STDIO_PRINTF_COMPAT(
-          "  show [time_ms] [interval_ms] - Print pressure, temperature and height.\r\n");
+      LibXR::STDIO::Printf<"Usage:\r\n">();
+      LibXR::STDIO::Printf<
+          "  show [time_ms] [interval_ms] - Print pressure, temperature and height.\r\n">();
       return 0;
     }
 
@@ -344,7 +335,7 @@ class SPL06 : public LibXR::Application {
       interval_ms = std::clamp(interval_ms, 10, 1000);
 
       while (time_ms > 0) {
-        XR_STDIO_PRINTF_COMPAT("SPL06: pressure=%fPa temp=%fC height=%fcm\r\n",
+        LibXR::STDIO::Printf<"SPL06: pressure=%fPa temp=%fC height=%fcm\r\n">(
             spl06->data_.pressure_pa, spl06->data_.temperature_c,
             spl06->data_.height_cm);
         LibXR::Thread::Sleep(interval_ms);
@@ -353,7 +344,7 @@ class SPL06 : public LibXR::Application {
       return 0;
     }
 
-    XR_STDIO_PRINTF_COMPAT("Error: Invalid arguments.\r\n");
+    LibXR::STDIO::Printf<"Error: Invalid arguments.\r\n">();
     return -1;
   }
 
